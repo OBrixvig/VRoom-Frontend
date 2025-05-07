@@ -17,18 +17,22 @@ const app = createApp({
                 const response = await login(this.email, this.password);
                 
                 if (response.status === 201) {
-                    // Cookie håndteres typisk automatisk af browseren via Set-Cookie header
-                    // Hvis API'et returnerer en token i response.data, kan vi gemme den manuelt
+                    // Hvis API'et returnerer en token i response.data
                     if (response.data.token) {
-                        document.cookie = `auth_token=${response.data.token}; path=/; Secure; SameSite=Strict`;
+                        document.cookie = `auth_token=${response.data.token}; path=/; SameSite=Strict`;
+                        console.log('Cookie sat manuelt:', document.cookie);
                     }
-                    // Omdiriger til booking-siden
                     window.location.href = 'FrontEnd.html';
                 } else {
                     this.error = 'Login mislykkedes. Tjek dine oplysninger.';
                 }
             } catch (error) {
-                this.error = error.response?.data?.message || 'Fejl ved login. Prøv igen senere.';
+                // Simuler succesfuldt login til test, da API ikke er tilgængeligt
+                document.cookie = `auth_token=dummy_token; path=/; SameSite=Strict`;
+                console.log('Simuleret cookie sat:', document.cookie);
+                window.location.href = 'FrontEnd.html';
+                // Kommenter ovenstående ud, når du har API'et
+                // this.error = error.response?.data?.message || 'Fejl ved login. Prøv igen senere.';
             }
         },
     },

@@ -49,15 +49,31 @@ const app = createApp({
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
-            return null;
+            return token;
         },
         async checkAuth() {
             const token = this.getCookie('auth_token');
             if (!token) {
-                window.location.href = 'index.html';
+                window.location.replace('index.html');
                 return false;
             }
             return true;
+        },
+        async fetchBookings() {
+            try {
+                const bookings = await getAll('Bookings');
+                this.Bookings = bookings.map(booking => ({
+                    id: booking.id,
+                    room: booking.room,
+                    timeSlotId: booking.timeSlotId,
+                    isActive: booking.isActive,
+                    timeSlotDisplay: this.getTimeSlotDisplay(booking.timeSlotId),
+                }));
+            } catch (error) {
+                if (error.response?.status === 401) {
+                    window.location.replace('index.html');
+                }
+            }
         },
         previousDay() {
             this.currentDate.setDate(this.currentDate.getDate() - 1);
@@ -84,7 +100,13 @@ const app = createApp({
         },
     },
     mounted() {
-        this.fetchBookings(); // Hent bookinger ved komponentens mount
+        this.isLoading = true;
+        this.isAuthenticated = this.checkAuth(); // Tjek om brugeren er autentificeret via cookies
+        if (this.isAuthenticated) {
+            console.log('Bruger autentificeret, henter bookinger');
+            this.fetchBookings();// Hent bookinger ved komponentens mount
+        }
+        this.isLoading = false;
     },
 });
 
