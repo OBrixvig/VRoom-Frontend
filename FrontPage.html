@@ -16,18 +16,18 @@
             <h2>{{ formattedDate }}</h2>
             <button class="btn btn-secondary ms-2" @click="nextDay">→</button>
         </div>
-
+    
         <!-- Bookings -->
         <div class="row">
             <div class="col-md-6 mb-4" v-for="booking in filteredBookings" :key="booking.id">
-                <div class="card" :class="{'bg-success text-white': booking.isAvailable, 'bg-secondary text-white': !booking.isAvailable}">
+                <div class="card" :class="{'bg-success text-white': booking.isActive, 'bg-secondary text-white': !booking.isActive}">
                     <div class="card-body">
                         <h5 class="card-title">{{ booking.room }}</h5>
                         <p class="card-text">Vælg Tid:</p>
-                        <select class="form-select mb-3" v-model="selectedTimeSlot[booking.id]" :disabled="!booking.isAvailable">
-                            <option v-for="timeSlot in booking.timeSlots" :value="timeSlot">{{ timeSlot }}</option>
+                        <select class="form-select mb-3" v-model="selectedTimeSlot[booking.id]" :disabled="!booking.isActive">
+                            <option v-for="slot in timeSlots" :value="slot.id">{{ slot.display }}</option>
                         </select>
-                        <button class="btn btn-light" :disabled="!booking.isAvailable" @click="bookRoom(booking)">Book rum</button>
+                        <button class="btn btn-light" :disabled="!booking.isActive" @click="bookRoom(booking)">Book rum</button>
                     </div>
                 </div>
             </div>
@@ -37,7 +37,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <!--Bootstrap js-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    <!--Husk at redigere vejen til dit egen js-->
     <script src="Js/FrontPage.js" type="module"></script>
 </body>
 </html>
