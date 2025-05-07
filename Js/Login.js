@@ -29,10 +29,9 @@ const app = createApp({
 
                 const response = await login(this.email, this.password);
                 
-                console.log('Login respons:', response);
                 if (response.Token) {
-                    localStorage.setItem('jwt_token', response.Token);
-                    window.location.href = 'FrontEnd.html';
+                      // Gem token i cookie
+                      document.cookie = `jwt_token=${response.Token}; path=/; SameSite=Strict`;
                 } else {
                     this.error = 'Login mislykkedes. Ingen token modtaget.';
                 }

@@ -28,21 +28,27 @@ const app = createApp({
         },
     },
     methods: {
+
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) {
+                const token = parts.pop().split(';').shift();
+                return token;
+            }
+            return null;
+        },
+
         checkAuth() {
-            console.log('Tjekker autentificering');
-            const token = localStorage.getItem('jwt_token');
-            console.log('JWT-token i localStorage:', token);
+            const token = this.getCookie('jwt_token');
             if (!token) {
-                console.log('Ingen token fundet, omdirigerer til index.html');
                 window.location.replace('index.html');
                 return false;
             }
-            console.log('Token fundet, fortsætter');
             return true;
         },
         async fetchBookings() {
             try {
-                console.log('Henter bookinger fra API');
                 const bookings = await getAll('Bookings');
                 this.Bookings = bookings.map(booking => ({
                     id: booking.id,
@@ -51,11 +57,8 @@ const app = createApp({
                     isActive: booking.isActive,
                     timeSlotDisplay: this.getTimeSlotDisplay(booking.timeSlotId),
                 }));
-                console.log('Bookinger hentet:', this.Bookings);
             } catch (error) {
-                console.error('Fejl ved hentning af bookinger:', error);
                 if (error.response?.status === 401) {
-                    console.log('401 Unauthorized, omdirigerer til index.html');
                     window.location.replace('index.html');
                 }
             }
@@ -84,15 +87,12 @@ const app = createApp({
         },
     },
     mounted() {
-        console.log('Komponent mounted, starter autentificeringstjek');
         this.isLoading = true;
         this.isAuthenticated = this.checkAuth();
         if (this.isAuthenticated) {
-            console.log('Bruger autentificeret, henter bookinger');
             this.fetchBookings();
         }
         this.isLoading = false;
-        console.log('Loading færdig, isAuthenticated:', this.isAuthenticated);
     },
 });
 
