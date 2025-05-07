@@ -11,9 +11,22 @@ const app = createApp({
         };
     },
     methods: {
+
+        validateEmail(email) {
+            // Regex fra backend: ^[^@\s]+@edu\.zealand\.dk$ fordi det sagde stackoverflow XD
+            const regex = /^[^@\s]+@edu\.zealand\.dk$/;
+            return regex.test(email);
+        },
         async handleLogin() {
             try {
                 this.error = null;
+
+                   // Valider e-mail
+                   if (!this.validateEmail(this.email)) {
+                    this.error = 'E-mail skal ende på @edu.zealand.dk';
+                    return;
+                }
+
                 const response = await login(this.email, this.password);
                 
                 console.log('Login respons:', response);

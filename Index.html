@@ -18,8 +18,8 @@
                         <div v-if="error" class="alert alert-danger">{{ error }}</div>
                         <form @submit.prevent="handleLogin">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input v-model="email" type="email" class="form-control" id="email" required>
+                                <label for="email" class="form-label">Benyt din ZEALAND e-mail</label>
+                                <input v-model="email" type="email" class="form-control" id="email" placeholder="bruger@edu.zealand.dk" required>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
