@@ -7,6 +7,8 @@ const app = createApp({
         return {
             currentDate: new Date(),
             Bookings: [], // Et tomt array af bookinger
+            isLoading: true,
+            isAuthenticated: false,
             selectedTimeSlot: [
                 { id: 1, display: '10:00 - 12:00' },
                 { id: 2, display: '12:00 - 14:00' },    // skal holder styr på valgte tidsintervaller
@@ -41,6 +43,21 @@ const app = createApp({
             } catch (error) {
                 console.error('Fejl ved hentning af bookinger:', error);
             }
+        },
+         // Funktion til at tjekke om cookie eksisterer
+         getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        },
+        async checkAuth() {
+            const token = this.getCookie('auth_token');
+            if (!token) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
         },
         previousDay() {
             this.currentDate.setDate(this.currentDate.getDate() - 1);

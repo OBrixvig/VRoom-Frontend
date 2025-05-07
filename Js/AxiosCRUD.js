@@ -20,6 +20,16 @@ export async function getById(resource, id) {
     }
 }
 
+export async function getByEmail(resource, email) {
+    try {
+        const response = await axios.get(`${API_URL}${resource}/${email}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching ${resource} with email ${email}:`, error);
+        throw error;
+    }
+}
+
 export async function create(resource, data) {
     try {
         const response = await axios.post(`${API_URL}${resource}/`, data, {
@@ -48,6 +58,18 @@ export async function remove(resource, id) {
         await axios.delete(`${API_URL}${resource}/${id}`);
     } catch (error) {
         console.error(`Error deleting ${resource} with ID ${id}:`, error);
+        throw error;
+    }
+}
+
+export async function login(email, password) {
+    try {                           //Husk at url kan være anderledes afhængig af hvordan vi har sat api'en op
+        const response = await axios.post(`${API_URL}auth/login`, { email, password }, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+        return response; // Returner hele response for at få adgang til headers (cookies)
+    } catch (error) {
+        console.error('Error logging in:', error);
         throw error;
     }
 }
