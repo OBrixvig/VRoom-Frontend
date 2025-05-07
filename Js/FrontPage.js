@@ -23,44 +23,26 @@ const app = createApp({
             return this.currentDate.toLocaleDateString('da-DK', { year: 'numeric', month: 'long', day: 'numeric' });
         },
         filteredBookings() {
-            // Filtrer bookinger baseret på dato eller andre kriterier, hvis nødvendigt
+            // Filtrerer bookinger baseret på den valgte dato
             return this.Bookings;
         },
     },
     methods: {
-        async fetchBookings() {
-            try {
-                // Hent bookinger fra API (resource = 'Bookings')
-                const bookings = await getAll('Bookings');
-                this.Bookings = bookings.map(booking => ({
-                    id: booking.id,
-                    room: booking.room,
-                    timeSlotId: booking.timeSlotId, // Bruger TimeSlotId fra API
-                    isActive: booking.isActive,
-                    // Konverter TimeSlotId til et læsbart format (se nedenfor)
-                    timeSlotDisplay: this.getTimeSlotDisplay(booking.timeSlotId),
-                }));
-            } catch (error) {
-                console.error('Fejl ved hentning af bookinger:', error);
-            }
-        },
-         // Funktion til at tjekke om cookie eksisterer
-         getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-            return token;
-        },
-        async checkAuth() {
-            const token = this.getCookie('auth_token');
+        checkAuth() {
+            console.log('Tjekker autentificering');
+            const token = localStorage.getItem('jwt_token');
+            console.log('JWT-token i localStorage:', token);
             if (!token) {
+                console.log('Ingen token fundet, omdirigerer til index.html');
                 window.location.replace('index.html');
                 return false;
             }
+            console.log('Token fundet, fortsætter');
             return true;
         },
         async fetchBookings() {
             try {
+                console.log('Henter bookinger fra API');
                 const bookings = await getAll('Bookings');
                 this.Bookings = bookings.map(booking => ({
                     id: booking.id,
@@ -69,19 +51,22 @@ const app = createApp({
                     isActive: booking.isActive,
                     timeSlotDisplay: this.getTimeSlotDisplay(booking.timeSlotId),
                 }));
+                console.log('Bookinger hentet:', this.Bookings);
             } catch (error) {
+                console.error('Fejl ved hentning af bookinger:', error);
                 if (error.response?.status === 401) {
+                    console.log('401 Unauthorized, omdirigerer til index.html');
                     window.location.replace('index.html');
                 }
             }
         },
         previousDay() {
             this.currentDate.setDate(this.currentDate.getDate() - 1);
-            this.fetchBookings(); // Hent bookinger for ny dato
+            this.fetchBookings();
         },
         nextDay() {
             this.currentDate.setDate(this.currentDate.getDate() + 1);
-            this.fetchBookings(); // Hent bookinger for ny dato
+            this.fetchBookings();
         },
         bookRoom(booking) {
             const selectedTimeSlot = this.selectedTimeSlot[booking.id];
@@ -89,24 +74,25 @@ const app = createApp({
 
             const queryParams = new URLSearchParams({
                 room: booking.room,
-                timeSlot: selectedTimeSlot,
+                timeSlot: this.getTimeSlotDisplay(selectedTimeSlot),
             }).toString();
             window.location.href = `bookingPage.html?${queryParams}`;
         },
-        // Hjælpefunktion til at konvertere TimeSlotId til læsbart format.
         getTimeSlotDisplay(timeSlotId) {
             const slot = this.timeSlots.find(slot => slot.id === timeSlotId);
             return slot ? slot.display : 'Ukendt tid';
         },
     },
     mounted() {
+        console.log('Komponent mounted, starter autentificeringstjek');
         this.isLoading = true;
-        this.isAuthenticated = this.checkAuth(); // Tjek om brugeren er autentificeret via cookies
+        this.isAuthenticated = this.checkAuth();
         if (this.isAuthenticated) {
             console.log('Bruger autentificeret, henter bookinger');
-            this.fetchBookings();// Hent bookinger ved komponentens mount
+            this.fetchBookings();
         }
         this.isLoading = false;
+        console.log('Loading færdig, isAuthenticated:', this.isAuthenticated);
     },
 });
 

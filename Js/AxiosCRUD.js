@@ -1,5 +1,29 @@
-const API_URL = 'Indsæt api her tak';
+const API_URL = 'Indsæt api her tak'; // kunne være http://localhost:8000/api/ imens jeg venter på vi pusher op
 
+//#region Login
+// Konfigurer Axios til at inkludere token i Authorization header
+axios.interceptors.request.use(config => {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, error => Promise.reject(error));
+
+export async function login(email, password) {
+    try {                           //Husk at url kan være anderledes afhængig af hvordan vi har sat api'en op
+        const response = await axios.post(`${API_URL}auth/login`, { email, password }, {
+            headers: { 'Content-Type': 'application/json' },
+        });
+        return response; // Returner hele response for at få adgang til headers (cookies)
+    } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+    }
+}
+//#endregion
+
+//#region CRUD
 export async function getAll(resource) {
     try {
         const response = await axios.get(`${API_URL}${resource}/`);
@@ -61,15 +85,4 @@ export async function remove(resource, id) {
         throw error;
     }
 }
-
-export async function login(email, password) {
-    try {                           //Husk at url kan være anderledes afhængig af hvordan vi har sat api'en op
-        const response = await axios.post(`${API_URL}auth/login`, { email, password }, {
-            headers: { 'Content-Type': 'application/json' },
-        });
-        return response; // Returner hele response for at få adgang til headers (cookies)
-    } catch (error) {
-        console.error('Error logging in:', error);
-        throw error;
-    }
-}
+//#endregion
