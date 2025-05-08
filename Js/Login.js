@@ -11,9 +11,7 @@ const app = createApp({
         };
     },
     methods: {
-
         validateEmail(email) {
-            // Regex fra backend: ^[^@\s]+@edu\.zealand\.dk$ fordi det sagde stackoverflow XD
             const regex = /^[^@\s]+@edu\.zealand\.dk$/;
             return regex.test(email);
         },
@@ -21,26 +19,36 @@ const app = createApp({
             try {
                 this.error = null;
 
-                   // Valider e-mail
-                   if (!this.validateEmail(this.email)) {
+                // Valider e-mail
+                if (!this.validateEmail(this.email)) {
                     this.error = 'E-mail skal ende på @edu.zealand.dk';
                     return;
                 }
 
+                // Slet gamle tokens
+                localStorage.removeItem('jwt_token');
+
                 const response = await login(this.email, this.password);
-                
-                if (response.Token) {
-                      // Gem token i cookie
-                      document.cookie = `jwt_token=${response.Token}; path=/; SameSite=Strict`;
+
+                if (response && response.token) {
+                    // Gemmer token i localStorage
+                    localStorage.setItem('jwt_token', response.token);
+                    // Omdiriger til forsiden
+                    window.location.replace('FrontPage.html');
                 } else {
                     this.error = 'Login mislykkedes. Ingen token modtaget.';
                 }
             } catch (error) {
-                this.error = error.response?.data || 'Fejl ved login. Tjek email og password.';
+                if (error.response?.status === 401) {
+                    this.error = 'Ugyldig email eller adgangskode.';
+                } else if (error.response?.data) {
+                    this.error = error.response.data || 'Fejl ved login. Tjek email og adgangskode.';
+                } else {
+                    this.error = 'Kunne ikke oprette forbindelse til serveren.';
+                }
             }
         },
     },
 });
-
 
 app.mount('#app');
