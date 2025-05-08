@@ -1,4 +1,4 @@
-const API_URL = 'Indsæt api her tak';
+const API_URL = 'http://localhost:5245/api/';
 
 export async function getAll(resource) {
     try {
