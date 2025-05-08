@@ -16,6 +16,7 @@
                 <span class="visually-hidden">Indlæser...</span>
             </div>
         </div>
+<<<<<<< HEAD
         <!-- Indhold vises kun hvis autentificeret -->
         <div v-if="!isLoading && isAuthenticated">
             <!-- Dato navigation -->
@@ -37,19 +38,41 @@
                             </select>
                             <button class="btn btn-light" :disabled="!booking.isActive" @click="bookRoom(booking)">Book rum</button> 
                         </div>
+=======
+    
+        <!-- Rum og tidsslots -->
+        <div class="row">
+            <div class="col-md-6 mb-4" v-for="room in filteredRooms" :key="room.roomId">
+                <div class="card" :class="{'bg-success text-white': room.isActive, 'bg-secondary text-white': !room.isActive}">
+                    <div class="card-body">
+                        <h5 class="card-title">Rum {{ room.roomId }}</h5>
+                        <p class="card-text">Vælg Tid:</p>
+                        <select class="form-select mb-3" v-model="selectedTimeSlotForBooking[room.roomId]" :disabled="!room.isActive">
+                            <option disabled value="">Vælg tidsslot</option>
+                            <option v-for="slot in room.timeSlots" :value="slot.id">{{ slot.display }}</option>
+                        </select>
+                        <button class="btn btn-light" :disabled="!room.isActive" @click="bookRoom(room)">Book rum</button>
+>>>>>>> 50708f2594dffaf01691a1950f430121c4f92913
                     </div>
                 </div>
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
     <!-- Vue.js -->
+=======
+    <!-- Vue -->
+>>>>>>> 50708f2594dffaf01691a1950f430121c4f92913
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
     <!-- Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<<<<<<< HEAD
     <!-- FrontPage JS -->
+=======
+>>>>>>> 50708f2594dffaf01691a1950f430121c4f92913
     <script src="Js/FrontPage.js" type="module"></script>
 </body>
 </html>

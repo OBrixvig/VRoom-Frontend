@@ -1,4 +1,4 @@
-const API_URL = 'Indsæt api her tak'; // kunne være http://localhost:8000/api/ imens jeg venter på vi pusher op
+const API_URL = 'http://localhost:5245/api/'; // kunne være http://localhost:8000/api/ imens jeg venter på vi pusher op
 
 //#region Login
 // Konfigurer Axios til at inkludere token i Authorization header
@@ -24,6 +24,8 @@ export async function login(email, password) {
 //#endregion
 
 //#region CRUD
+const API_URL = 'http://localhost:5245/api/';
+
 export async function getAll(resource) {
     try {
         const response = await axios.get(`${API_URL}${resource}/`);
