@@ -15,15 +15,20 @@
                 <span class="visually-hidden">Indlæser...</span>
             </div>
         </div>
-        <!-- Fejlmeddelelse -->
+        <!-- Kritiske fejl (f.eks. API-fejl) -->
         <div v-if="error" class="alert alert-danger">{{ error }}</div>
         <!-- Hovedindhold -->
         <div v-else>
-            <!--datovælger -->
+            <!-- Datovælger -->
             <div class="d-flex justify-content-center mb-3">
                 <button @click="previousDay" class="btn btn-secondary me-2"> < Forrige dag </button>
                 <span class="align-self-center">{{ formattedDate }}</span>
                 <button @click="nextDay" class="btn btn-secondary ms-2"> Næste dag > </button>
+            </div>
+            <!-- Mindre fejlbesked (f.eks. manglende tidsslot) -->
+            <div v-if="warning" class="alert alert-warning alert-dismissible fade show mt-2" role="alert">
+                {{ warning }}
+                <button type="button" class="btn-close" @click="warning = null" aria-label="Close"></button>
             </div>
             <!-- Rum og tidsslots -->
             <div class="row">
