@@ -1,10 +1,12 @@
 import { getAll } from './AxiosCRUD.js';
 
-// Tjek autentificering før Vue initialiseres
+// Tjekker om man er loggint ind før siden vises
 const token = localStorage.getItem('jwt_token');
 if (!token) {
     window.location.replace('index.html');
-} else {
+            } 
+else 
+{
     const { createApp } = Vue;
 
     const app = createApp({
@@ -16,7 +18,7 @@ if (!token) {
                 selectedTimeSlotForBooking: {},
                 isLoading: false,
                 error: null,
-                isAuthenticated: true, // Sæt til true, da vi har tjekket token
+                isAuthenticated: true,
             };
         },
         computed: {
@@ -64,7 +66,6 @@ if (!token) {
                         timeSlot: booking.timeSlot,
                         date: booking.date,
                     }));
-                    console.log('Raw bookings:', this.Bookings);
                 } catch (error) {
                     this.error = 'Kunne ikke hente bookinger.';
                     if (error.response?.status === 401) {
@@ -77,10 +78,12 @@ if (!token) {
             },
             previousDay() {
                 this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() - 1));
+                localStorage.setItem('selectedDate', this.currentDate.toISOString().split('T')[0]);
                 this.fetchBookings();
             },
             nextDay() {
                 this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + 1));
+                localStorage.setItem('selectedDate', this.currentDate.toISOString().split('T')[0]);
                 this.fetchBookings();
             },
             bookRoom(room) {
@@ -91,11 +94,21 @@ if (!token) {
                     return;
                 }
 
+                // Log værdier til debugging
+                console.log('bookRoom værdier:', {
+                    roomId: room.roomId,
+                    timeSlot: selectedTimeSlot.display,
+                    selectedTimeSlotId,
+                });
+                
+                // Gem dato i localStorage
+                localStorage.setItem('selectedDate', this.currentDate.toISOString().split('T')[0]);
+
                 const queryParams = new URLSearchParams({
                     room: room.roomId,
                     timeSlot: selectedTimeSlot.display,
                 }).toString();
-                window.location.href = `bookingPage.html?${queryParams}`;
+                window.location.href = `Booking.html?${queryParams}`;
             },
             getTimeSlotId(timeSlot) {
                 const slotMap = {
@@ -107,12 +120,10 @@ if (!token) {
                 };
                 return slotMap[timeSlot] || 0;
             },
-            logout() {
-                localStorage.removeItem('jwt_token');
-                window.location.replace('index.html');
-            },
         },
         mounted() {
+            // Sætter dato i localStorage toIsoString da det er den format det ligner API'en vil have. Dunno burde høre Nikolaj men fuck naj
+            localStorage.setItem('selectedDate', this.currentDate.toISOString().split('T')[0]);
             this.fetchBookings();
         },
     });
