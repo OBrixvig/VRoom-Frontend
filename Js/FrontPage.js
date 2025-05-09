@@ -18,6 +18,7 @@ else
                 selectedTimeSlotForBooking: {},
                 isLoading: false,
                 error: null,
+                warning: null,
                 isAuthenticated: true,
             };
         },
@@ -90,17 +91,24 @@ else
                 const selectedTimeSlotId = this.selectedTimeSlotForBooking[room.roomId];
                 const selectedTimeSlot = room.timeSlots.find(slot => slot.id === selectedTimeSlotId);
                 if (!selectedTimeSlot) {
-                    this.error = 'Vælg venligst et tidsslot';
+                    this.warning = 'Husk at vælge et tidsrum.';
+                    setTimeout(() => {
+                        this.warning = null;
+                    }, 2000);
                     return;
                 }
-
+                if (!room.roomId) {
+                    this.error = 'Ingen rum-ID tilgængelig';
+                    return;
+                }
+                
                 // Log værdier til debugging
                 console.log('bookRoom værdier:', {
                     roomId: room.roomId,
                     timeSlot: selectedTimeSlot.display,
                     selectedTimeSlotId,
                 });
-                
+
                 // Gem dato i localStorage
                 localStorage.setItem('selectedDate', this.currentDate.toISOString().split('T')[0]);
 
