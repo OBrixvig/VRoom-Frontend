@@ -1,16 +1,15 @@
 import { create } from './AxiosCRUD.js';
+import ConfirmModal from './ConfirmModal.js';
 
-const { createApp } = Vue;
-
-// Tjekker om man er loggint ind
+// Tjekker om man er logget ind
 const token = localStorage.getItem('jwt_token');
-if (!token) 
-    {
+if (!token) {
     window.location.replace('index.html');
-    } 
-else 
-{
-    const app = createApp({
+} else {
+    const app = Vue.createApp({
+        components: {
+            'confirm-modal': ConfirmModal,
+        },
         data() {
             return {
                 booking: {
@@ -46,21 +45,39 @@ else
                         userEmail: this.booking.userEmail,
                     });
 
-                    // Omdiriger til FrontPage.html ved succes, burde være details, men den er ikke oprettet endnu
-                    window.location.replace('FrontPage.html');// husk at ændre til Details.html når den er oprettet
+                    // Omdiriger til FrontPage.html ved succes, burde være Details.html når den er oprettet
+                    window.location.replace('FrontPage.html'); // husk at ændre til Details.html når den er oprettet
                 } catch (error) {
                     this.error = error.response?.data || 'Booking mislykkedes. Prøv igen.';
                 } finally {
                     this.isLoading = false;
                 }
             },
+            // viser Modal for at bekræfte booking
+            showConfirmModal() {
+                Vue.nextTick(() => {
+                    const modalElement = document.getElementById('bookingConfirmModal');
+                    if (modalElement) {
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    } else {
+                        console.error('Modal element with ID bookingConfirmModal not found');
+                    }
+                });
+            },
+            closeConfirmModal() {
+                const modalElement = document.getElementById('bookingConfirmModal');
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+                }
+            },
             getLoggedInUser() {
-                // henter email fra JWT-token
+                // Henter email fra JWT-token
                 try {
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     return payload.email || null;
                 } catch (e) {
-                    // debug prøver at finde ud af hvorfor den ikke kan finde email.
                     console.error('Fejl ved hentning af email i JWT:', e);
                     return null;
                 }

@@ -1,8 +1,7 @@
-// Ingen import, da axios er global fra CDN
-const API_URL = 'http://localhost:5245/api/';
+const API_URL = 'http://localhost:5245/api/'; // husk at indsætte ægte api her.
 
-//#region Axios Interceptors
-// Request interceptor: Tilføjer token fra localStorage til Authorization-header
+//#region Axios Interceptors Burde måske være i en anden fil utility.js
+//Tilføjer token fra localStorage til Authorization-header
 axios.interceptors.request.use(config => {
     const token = localStorage.getItem('jwt_token');
     if (token) {
@@ -11,7 +10,7 @@ axios.interceptors.request.use(config => {
     return config;
 }, error => Promise.reject(error));
 
-// Response interceptor: Fjerner token og omdirigerer ved 401 Unauthorized
+//Fjerner token og omdirigerer ved 401 Unauthorized
 axios.interceptors.response.use(response => response, error => {
     if (error.response?.status === 401) {
         localStorage.removeItem('jwt_token');
