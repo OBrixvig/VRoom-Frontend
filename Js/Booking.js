@@ -34,6 +34,19 @@ if (!token) {
             },
         },
         methods: {
+            addNewMemberInput() {
+                const newMemberInput = document.createElement('input');
+                newMemberInput.type = 'email';
+                newMemberInput.placeholder = 'email på gruppemedlem';
+                newMemberInput.className = 'member-input';
+                document.getElementById('memberInputs').appendChild(newMemberInput);
+            },
+            removeMemberInput() {
+                const memberInputs = document.querySelectorAll('.member-input');
+                if (memberInputs.length > 0) {
+                    memberInputs[memberInputs.length - 1].remove();
+                }
+            },
             validateEmail(email) {
                 if (!email || email.trim() === '') return true;
                 const regex = /^[^@\s]+@edu\.zealand\.dk$/;
