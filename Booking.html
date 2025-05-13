@@ -23,7 +23,7 @@
                         <div v-if="error" class="alert alert-danger">{{ error }}</div>
                         <!-- Booking-oplysninger -->
                         <div v-else>
-                            <p>Du booker: <strong>Rum {{ booking.roomid }}</strong>, <strong>{{ booking.timeSlot }}</strong> på <strong>{{ formattedDate }}</strong></p>
+                            <p>Du booker: <strong>Rum {{ booking.roomid }}</strong>, <strong>{{ booking.startTime }} - {{ booking.endTime }}</strong> på <strong>{{ formattedDate }}</strong></p>
                             <p>Bookes til: <strong>{{ booking.userEmail }}</strong></p>
                             <button @click="confirmBooking" class="btn btn-primary w-100">Bekræft booking</button>
                         </div>

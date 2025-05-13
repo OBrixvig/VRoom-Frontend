@@ -40,20 +40,24 @@ else
                             roomMap[booking.roomId] = {
                                 roomId: booking.roomId,
                                 timeSlots: [],
+                                startTime: booking.startTime,
+                                endTime: booking.endTime,
                                 isActive: true,
                             };
                         }
                         roomMap[booking.roomId].timeSlots.push({
-                            display: booking.timeSlot,
-                            id: this.getTimeSlotId(booking.timeSlot),
+                            startTime: booking.startTime,
+                            endTime: booking.endTime
                         });
                     }
                 });
 
-                return Object.values(roomMap).map(room => ({
-                    ...room,
-                    timeSlots: room.timeSlots.sort((a, b) => a.display.localeCompare(b.display)),
-                }));
+                //return Object.values(roomMap).map(room => ({
+                //    ...room,
+                //    timeSlots: room.timeSlots.sort((a, b) => a.startTime.localeCompare(b.startTime)),
+                //}));
+
+                return roomMap;
             },
         },
         methods: {
@@ -66,6 +70,8 @@ else
                         roomId: booking.roomId,
                         timeSlot: booking.timeSlot,
                         date: booking.date,
+                        startTime: booking.startTime,
+                        endTime: booking.endTime
                     }));
                 } catch (error) {
                     this.error = 'Kunne ikke hente bookinger.';
@@ -88,8 +94,7 @@ else
                 this.fetchBookings();
             },
             bookRoom(room) {
-                const selectedTimeSlotId = this.selectedTimeSlotForBooking[room.roomId];
-                const selectedTimeSlot = room.timeSlots.find(slot => slot.id === selectedTimeSlotId);
+                const selectedTimeSlot = this.selectedTimeSlotForBooking[room.roomId];
                 if (!selectedTimeSlot) {
                     this.warning = 'Husk at vælge et tidsrum.';
                     setTimeout(() => {
@@ -105,8 +110,8 @@ else
                 // Log værdier til debugging
                 console.log('bookRoom værdier:', {
                     roomId: room.roomId,
-                    timeSlot: selectedTimeSlot.display,
-                    selectedTimeSlotId,
+                    startTime: selectedTimeSlot.startTime,
+                    endTime: selectedTimeSlot.endTime,
                 });
 
                 // Gem dato i localStorage
@@ -114,20 +119,11 @@ else
 
                 const queryParams = new URLSearchParams({
                     room: room.roomId,
-                    timeSlot: selectedTimeSlot.display,
+                    startTime: selectedTimeSlot.startTime,
+                    endTime: selectedTimeSlot.endTime
                 }).toString();
                 window.location.href = `Booking.html?${queryParams}`;
-            },
-            getTimeSlotId(timeSlot) {
-                const slotMap = {
-                    '10:00 - 12:00': 1,
-                    '12:00 - 14:00': 2,
-                    '14:00 - 16:00': 3,
-                    '16:00 - 18:00': 4,
-                    '18:00 - 20:00': 5,
-                };
-                return slotMap[timeSlot] || 0;
-            },
+            }
         },
         mounted() {
             // Sætter dato i localStorage toIsoString da det er den format det ligner API'en vil have. Dunno burde høre Nikolaj men fuck naj

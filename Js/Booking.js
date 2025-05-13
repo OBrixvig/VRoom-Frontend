@@ -16,6 +16,8 @@ else
                 booking: {
                     roomid: null,
                     timeSlot: null,
+                    startTime: null,
+                    endTime: null,
                     date: null,
                     userEmail: null,
                 },
@@ -41,7 +43,8 @@ else
 
                     await create('Booking', {
                         roomid: this.booking.roomid,
-                        timeSlot: this.booking.timeSlot,
+                        startTime: this.booking.startTime,
+                        endTime: this.booking.endTime,
                         date: this.booking.date,
                         userEmail: this.booking.userEmail,
                     });
@@ -70,14 +73,17 @@ else
             // Hent query-parametre
             const params = new URLSearchParams(window.location.search);
             const roomParam = params.get('room');
-            const timeSlotParam = params.get('timeSlot');
+            const startTimeParam = params.get('startTime');
+            const endTimeParam = params.get('endTime');
+
 
             // Log query-parametre til debugging
-            console.log('Query-parametre:', { room: roomParam, timeSlot: timeSlotParam });
+            console.log('Query-parametre:', { room: roomParam, startTime: startTimeParam, endTime: endTimeParam });
 
             // Sæt booking-værdier
             this.booking.roomid = roomParam || null;
-            this.booking.timeSlot = timeSlotParam || null;
+            this.booking.startTime = startTimeParam || null;
+            this.booking.endTime = endTimeParam || null;
 
             // Hent dato fra localStorage eller brug dagens dato
             const selectedDate = localStorage.getItem('selectedDate') || new Date().toISOString().split('T')[0];
@@ -92,8 +98,12 @@ else
                 this.error = 'Ugyldigt rum-ID (tom streng).';
                 return;
             }
-            if (!timeSlotParam) {
-                this.error = 'Ingen tidsslot angivet i URL.';
+            if (!startTimeParam) {
+                this.error = 'Ingen starttid angivet i URL.';
+                return;
+            }
+            if (!endTimeParam) {
+                this.error = 'Ingen sluttid angivet i URL.';
                 return;
             }
 
