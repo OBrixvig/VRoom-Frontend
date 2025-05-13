@@ -46,10 +46,8 @@ else
                             };
                         }
                         roomMap[booking.roomId].timeSlots.push({
-                            //display: booking.timeSlot,
                             startTime: booking.startTime,
-                            endTime: booking.endTime,
-                            id: this.getTimeSlotId(booking.startTime),
+                            endTime: booking.endTime
                         });
                     }
                 });
@@ -96,8 +94,7 @@ else
                 this.fetchBookings();
             },
             bookRoom(room) {
-                const selectedTimeSlotId = this.selectedTimeSlotForBooking[room.roomId];
-                const selectedTimeSlot = room.timeSlots.find(slot => slot.id === selectedTimeSlotId);
+                const selectedTimeSlot = this.selectedTimeSlotForBooking[room.roomId];
                 if (!selectedTimeSlot) {
                     this.warning = 'Husk at vælge et tidsrum.';
                     setTimeout(() => {
@@ -113,8 +110,8 @@ else
                 // Log værdier til debugging
                 console.log('bookRoom værdier:', {
                     roomId: room.roomId,
-                    timeSlot: selectedTimeSlot.display,
-                    selectedTimeSlotId,
+                    startTime: selectedTimeSlot.startTime,
+                    endTime: selectedTimeSlot.endTime,
                 });
 
                 // Gem dato i localStorage
@@ -126,17 +123,7 @@ else
                     endTime: selectedTimeSlot.endTime
                 }).toString();
                 window.location.href = `Booking.html?${queryParams}`;
-            },
-            getTimeSlotId(timeSlot) {
-                const slotMap = {
-                    '10:00 - 12:00': 1,
-                    '12:00 - 14:00': 2,
-                    '14:00 - 16:00': 3,
-                    '16:00 - 18:00': 4,
-                    '18:00 - 20:00': 5,
-                };
-                return slotMap[timeSlot] || 0;
-            },
+            }
         },
         mounted() {
             // Sætter dato i localStorage toIsoString da det er den format det ligner API'en vil have. Dunno burde høre Nikolaj men fuck naj
