@@ -40,20 +40,26 @@ else
                             roomMap[booking.roomId] = {
                                 roomId: booking.roomId,
                                 timeSlots: [],
+                                startTime: booking.startTime,
+                                endTime: booking.endTime,
                                 isActive: true,
                             };
                         }
                         roomMap[booking.roomId].timeSlots.push({
-                            display: booking.timeSlot,
-                            id: this.getTimeSlotId(booking.timeSlot),
+                            //display: booking.timeSlot,
+                            startTime: booking.startTime,
+                            endTime: booking.endTime,
+                            id: this.getTimeSlotId(booking.startTime),
                         });
                     }
                 });
 
-                return Object.values(roomMap).map(room => ({
-                    ...room,
-                    timeSlots: room.timeSlots.sort((a, b) => a.display.localeCompare(b.display)),
-                }));
+                //return Object.values(roomMap).map(room => ({
+                //    ...room,
+                //    timeSlots: room.timeSlots.sort((a, b) => a.startTime.localeCompare(b.startTime)),
+                //}));
+
+                return roomMap;
             },
         },
         methods: {
@@ -66,6 +72,8 @@ else
                         roomId: booking.roomId,
                         timeSlot: booking.timeSlot,
                         date: booking.date,
+                        startTime: booking.startTime,
+                        endTime: booking.endTime
                     }));
                 } catch (error) {
                     this.error = 'Kunne ikke hente bookinger.';
@@ -114,7 +122,8 @@ else
 
                 const queryParams = new URLSearchParams({
                     room: room.roomId,
-                    timeSlot: selectedTimeSlot.display,
+                    startTime: selectedTimeSlot.startTime,
+                    endTime: selectedTimeSlot.endTime
                 }).toString();
                 window.location.href = `Booking.html?${queryParams}`;
             },
