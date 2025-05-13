@@ -25,6 +25,19 @@
                         <div v-else>
                             <p>Du booker: <strong>Rum {{ booking.roomid }}</strong>, <strong>{{ booking.timeSlot }}</strong> på <strong>{{ formattedDate }}</strong></p>
                             <p>Bookes til: <strong>{{ booking.userEmail }}</strong></p>
+                            <p>Tilføj gruppemedlem </p>
+                            <div class="mb-3">
+                                <label for="member1" class="form-label">Indsæt Email:</label>
+                                <input v-model="booking.member1" type="email" class="form-control" id="member1" placeholder="Indtast email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="member2" class="form-label">Indsæt Email:</label>
+                                <input v-model="booking.member2" type="email" class="form-control" id="member2" placeholder="Indtast email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="member3" class="form-label">Indsæt Email:</label>
+                                <input v-model="booking.member3" type="email" class="form-control" id="member3" placeholder="Indtast email">
+                            </div>
                             <button @click="confirmBooking" class="btn btn-primary w-100">Bekræft booking</button>
                         </div>
                     </div>
