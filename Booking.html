@@ -25,19 +25,16 @@
                         <div v-else>
                             <p>Du booker: <strong>Rum {{ booking.roomid }}</strong>, <strong>{{ booking.startTime }} - {{ booking.endTime }}</strong> på <strong>{{ formattedDate }}</strong></p>
                             <p>Bookes til: <strong>{{ booking.userEmail }}</strong></p>
-                            <p>Tilføj gruppemedlem </p>
-                            <div class="mb-3">
-                                <label for="member1" class="form-label">Indsæt Email:</label>
-                                <input v-model="booking.member1" type="email" class="form-control" id="member1" placeholder="Indtast email">
+                            <!-- Tilføjer nyt gruppemedlem til booking -->
+                            <p>Tilføj studie kammerat: (Optinal)</p>
+                            <div v-for="(member, index) in booking.members" :key="index" class="mb-3">
+                                <label :for="'member' + index" class="form-label">Indtast navn (Virker ikke endnu) eller email:</label>
+                                <div class="input-group">
+                                    <input v-model="booking.members[index]" type="email" class="form-control" :id="'member' + index" placeholder="ole weddel eller olleWeddel@edu.zealand.dk">
+                                    <button class="btn btn-danger" @click="removeMember(index)">-</button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="member2" class="form-label">Indsæt Email:</label>
-                                <input v-model="booking.member2" type="email" class="form-control" id="member2" placeholder="Indtast email">
-                            </div>
-                            <div class="mb-3">
-                                <label for="member3" class="form-label">Indsæt Email:</label>
-                                <input v-model="booking.member3" type="email" class="form-control" id="member3" placeholder="Indtast email">
-                            </div>
+                            <button v-if="booking.members.length < 3" class="btn btn-secondary mb-3" @click="addMember">+</button>
                             <button @click="confirmBooking" class="btn btn-primary w-100">Bekræft booking</button>
                         </div>
                     </div>

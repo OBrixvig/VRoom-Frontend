@@ -17,12 +17,11 @@ if (!token) {
                     endTime: null,
                     date: null,
                     userEmail: null,
-                    member1: null,
-                    member2: null,
-                    member3: null,
+                    members: [],
                 },
                 isLoading: false,
                 error: null,
+                
             };
         },
         computed: {
@@ -36,18 +35,18 @@ if (!token) {
             },
         },
         methods: {
-            addNewMemberInput() {
-                const newMemberInput = document.createElement('input');
-                newMemberInput.type = 'email';
-                newMemberInput.placeholder = 'email på gruppemedlem';
-                newMemberInput.className = 'member-input';
-                document.getElementById('memberInputs').appendChild(newMemberInput);
-            },
-            removeMemberInput() {
-                const memberInputs = document.querySelectorAll('.member-input');
-                if (memberInputs.length > 0) {
-                    memberInputs[memberInputs.length - 1].remove();
+            addMember() {
+                if (this.booking.members.length >= 3) {
+                    this.error = 'Maksimalt 3 gruppemedlemmer kan tilføjes.';
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 3000); 
+                    return;
                 }
+                this.booking.members.push(''); // burde tilføje et tomt felt til nyt medlemmer
+            },
+            removeMember(index) {
+                this.booking.members.splice(index, 1);
             },
             validateEmail(email) {
                 if (!email || email.trim() === '') return true;
@@ -59,13 +58,7 @@ if (!token) {
                     this.isLoading = true;
                     this.error = null;
 
-                    // Valider medlemsemails
-                    const members = [
-                        this.booking.member1,
-                        this.booking.member2,
-                        this.booking.member3,
-                    ];
-                    for (const [index, email] of members.entries()) {
+                    for (const [index, email] of this.booking.members.entries()) {
                         if (!this.validateEmail(email)) {
                             this.error = `Medlemsemail ${index + 1} skal ende på @edu.zealand.dk eller være tom`;
                             this.isLoading = false;
@@ -73,15 +66,19 @@ if (!token) {
                         }
                     }
 
+                    const member1 = this.booking.members[0] || null;
+                    const member2 = this.booking.members[1] || null;
+                    const member3 = this.booking.members[2] || null;
+
                     await create('Booking', {
                         roomid: this.booking.roomid,
                         startTime: this.booking.startTime,
                         endTime: this.booking.endTime,
                         date: this.booking.date,
                         userEmail: this.booking.userEmail,
-                        member1: this.booking.member1 || null,
-                        member2: this.booking.member2 || null,
-                        member3: this.booking.member3 || null,
+                        member1: member1,
+                        member2: member2,
+                        member3: member3,
                     });
 
                     // Omdiriger til FrontPage.html ved succes
