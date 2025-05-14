@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Husk at ændre titlen til noget der giver mening-->
+    <title>ZRoom min side</title>
+    <!--Bootstrap css-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" href="Css/Styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">ZRoom Booking</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <button @click="redirectToMyPage" class="btn btn-outline-success" type="submit">Min Side</button>
+            </div>
+        </nav>
+    </header>
+    <div id="app" class="container mt-4">
+        <!-- Loading -->
+        <div v-if="isLoading" class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Indlæser...</span>
+            </div>
+        </div>
+        <!-- Kritiske fejl (f.eks. API-fejl) -->
+        <div v-if="error" class="alert alert-danger">{{ error }}</div>
+        <!-- Hovedindhold -->
+        <div v-else>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Booking Id</th>
+                        <th>Dato</th>
+                        <th>Tid</th>
+                        <th>Rum</th>
+                        <th>Pin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="bookings in myBookings">
+                        <th scope="row">{{ bookings.id }}</th>
+                        <td>{{ bookings.date }}</td>
+                        <td>{{ bookings.startTime }} - {{ bookings.endTime }}</td>
+                        <td>{{ bookings.roomId }}</td>
+                        <td>{{ bookings.pinCode }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!--Vue-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <!--Bootstrap js-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <!-- Axios -->
+     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!--Husk at redigere vejen til dit egen js grunden til at module er der. er så import i dit javascript virker.-->
+    <script src="Js/MyPage.js" type="module"></script>
+</body>
+</html>
