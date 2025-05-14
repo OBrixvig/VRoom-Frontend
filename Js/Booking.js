@@ -2,14 +2,11 @@ import { create } from './AxiosCRUD.js';
 
 const { createApp } = Vue;
 
-// Tjekker om man er loggint ind
+// Tjekker om man er logget ind
 const token = localStorage.getItem('jwt_token');
-if (!token) 
-    {
+if (!token) {
     window.location.replace('index.html');
-    } 
-else 
-{
+} else {
     const app = createApp({
         data() {
             return {
@@ -20,9 +17,11 @@ else
                     endTime: null,
                     date: null,
                     userEmail: null,
+                    members: [],
                 },
                 isLoading: false,
                 error: null,
+                
             };
         },
         computed: {
@@ -36,10 +35,40 @@ else
             },
         },
         methods: {
+            addMember() {
+                if (this.booking.members.length >= 3) {
+                    this.error = 'Maksimalt 3 gruppemedlemmer kan tilføjes.';
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 3000); 
+                    return;
+                }
+                this.booking.members.push(''); // burde tilføje et tomt felt til nyt medlemmer
+            },
+            removeMember(index) {
+                this.booking.members.splice(index, 1);
+            },
+            validateEmail(email) {
+                if (!email || email.trim() === '') return true;
+                const regex = /^[^@\s]+@edu\.zealand\.dk$/;
+                return regex.test(email);
+            },
             async confirmBooking() {
                 try {
                     this.isLoading = true;
                     this.error = null;
+
+                    for (const [index, email] of this.booking.members.entries()) {
+                        if (!this.validateEmail(email)) {
+                            this.error = `Medlemsemail ${index + 1} skal ende på @edu.zealand.dk eller være tom`;
+                            this.isLoading = false;
+                            return;
+                        }
+                    }
+
+                    const member1 = this.booking.members[0] || null;
+                    const member2 = this.booking.members[1] || null;
+                    const member3 = this.booking.members[2] || null;
 
                     await create('Booking', {
                         roomid: this.booking.roomid,
@@ -47,10 +76,13 @@ else
                         endTime: this.booking.endTime,
                         date: this.booking.date,
                         userEmail: this.booking.userEmail,
+                        member1: member1,
+                        member2: member2,
+                        member3: member3,
                     });
 
-                    // Omdiriger til FrontPage.html ved succes, burde være details, men den er ikke oprettet endnu
-                    window.location.replace('FrontPage.html');// husk at ændre til Details.html når den er oprettet
+                    // Omdiriger til FrontPage.html ved succes
+                    window.location.replace('FrontPage.html'); // Skift til Details.html når oprettet
                 } catch (error) {
                     this.error = error.response?.data || 'Booking mislykkedes. Prøv igen.';
                 } finally {
@@ -58,12 +90,10 @@ else
                 }
             },
             getLoggedInUser() {
-                // henter email fra JWT-token
                 try {
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     return payload.email || null;
                 } catch (e) {
-                    // debug prøver at finde ud af hvorfor den ikke kan finde email.
                     console.error('Fejl ved hentning af email i JWT:', e);
                     return null;
                 }

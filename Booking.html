@@ -25,6 +25,16 @@
                         <div v-else>
                             <p>Du booker: <strong>Rum {{ booking.roomid }}</strong>, <strong>{{ booking.startTime }} - {{ booking.endTime }}</strong> på <strong>{{ formattedDate }}</strong></p>
                             <p>Bookes til: <strong>{{ booking.userEmail }}</strong></p>
+                            <!-- Tilføjer nyt gruppemedlem til booking -->
+                            <p>Tilføj studie kammerat: (Optinal)</p>
+                            <div v-for="(member, index) in booking.members" :key="index" class="mb-3">
+                                <label :for="'member' + index" class="form-label">Indtast navn (Virker ikke endnu) eller email:</label>
+                                <div class="input-group">
+                                    <input v-model="booking.members[index]" type="email" class="form-control" :id="'member' + index" placeholder="ole weddel eller olleWeddel@edu.zealand.dk">
+                                    <button class="btn btn-danger" @click="removeMember(index)">-</button>
+                                </div>
+                            </div>
+                            <button v-if="booking.members.length < 3" class="btn btn-secondary mb-3" @click="addMember">+</button>
                             <button @click="confirmBooking" class="btn btn-primary w-100">Bekræft booking</button>
                         </div>
                     </div>
