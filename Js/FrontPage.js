@@ -1,3 +1,4 @@
+import { SharedNavbar } from '/Components/SharedNavbar.js';
 import { getAll } from './AxiosCRUD.js';
 
 // Tjekker om man er loggint ind før siden vises
@@ -51,12 +52,7 @@ else
                         });
                     }
                 });
-
-                //return Object.values(roomMap).map(room => ({
-                //    ...room,
-                //    timeSlots: room.timeSlots.sort((a, b) => a.startTime.localeCompare(b.startTime)),
-                //}));
-
+                
                 return roomMap;
             },
         },
@@ -132,5 +128,6 @@ else
         },
     });
 
+    app.component('shared-navbar', SharedNavbar);
     app.mount('#app');
 }

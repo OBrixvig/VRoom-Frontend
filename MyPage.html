@@ -10,48 +10,42 @@
     <link rel="stylesheet" href="Css/Styles.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-              <a class="navbar-brand" href="#">ZRoom Booking</a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <button @click="redirectToMyPage" class="btn btn-outline-success" type="submit">Min Side</button>
+    <div id="app">
+        <shared-navbar></shared-navbar>
+        <div class="container mt-4">
+            <!-- Loading -->
+            <div v-if="isLoading" class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Indlæser...</span>
+                </div>
             </div>
-        </nav>
-    </header>
-    <div id="app" class="container mt-4">
-        <!-- Loading -->
-        <div v-if="isLoading" class="text-center">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Indlæser...</span>
+            <!-- Kritiske fejl (f.eks. API-fejl) -->
+            <div v-if="error" class="alert alert-danger">{{ error }}</div>
+            <!-- Hovedindhold -->
+            <div v-else>
+                <h1>Dine Reservationer</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Booking Id</th>
+                            <th>Dato</th>
+                            <th>Tid</th>
+                            <th>Rum</th>
+                            <th>Pin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="booking in myBookings">
+                            <th scope="row">{{ booking.id }}</th>
+                            <td>{{ booking.date }}</td>
+                            <td>{{ booking.startTime }} - {{ booking.endTime }}</td>
+                            <td>{{ booking.roomid }}</td>
+                            <td>{{ booking.pinCode }}</td>
+                            <td><button type="button" class="btn btn-danger">Anuller Reservation</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
-        <!-- Kritiske fejl (f.eks. API-fejl) -->
-        <div v-if="error" class="alert alert-danger">{{ error }}</div>
-        <!-- Hovedindhold -->
-        <div v-else>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Booking Id</th>
-                        <th>Dato</th>
-                        <th>Tid</th>
-                        <th>Rum</th>
-                        <th>Pin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="bookings in myBookings">
-                        <th scope="row">{{ bookings.id }}</th>
-                        <td>{{ bookings.date }}</td>
-                        <td>{{ bookings.startTime }} - {{ bookings.endTime }}</td>
-                        <td>{{ bookings.roomId }}</td>
-                        <td>{{ bookings.pinCode }}</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
     </div>
 
@@ -67,7 +61,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
     <!-- Axios -->
      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!--Husk at redigere vejen til dit egen js grunden til at module er der. er så import i dit javascript virker.-->
     <script src="Js/MyPage.js" type="module"></script>
+
+    <!-- Components -->
+     <script type="module" src="Components/SharedNavbar.js"></script>
 </body>
 </html>

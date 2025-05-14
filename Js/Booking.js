@@ -1,3 +1,4 @@
+import { SharedNavbar } from '/Components/SharedNavbar.js';
 import { create } from './AxiosCRUD.js';
 
 const { createApp } = Vue;
@@ -81,8 +82,8 @@ if (!token) {
                         member3: member3,
                     });
 
-                    // Omdiriger til FrontPage.html ved succes
-                    window.location.replace('FrontPage.html'); // Skift til Details.html når oprettet
+                    // Omdiriger til MyPage.html ved succes
+                    window.location.replace('MyPage.html');
                 } catch (error) {
                     this.error = error.response?.data || 'Booking mislykkedes. Prøv igen.';
                 } finally {
@@ -147,5 +148,6 @@ if (!token) {
         },
     });
 
+    app.component('shared-navbar', SharedNavbar);
     app.mount('#app');
 }
