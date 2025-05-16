@@ -35,26 +35,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="booking in myBookings">
+                        <tr v-for="booking in myBookings" :key="booking.id">
                             <th scope="row">{{ booking.id }}</th>
                             <td>{{ booking.date }}</td>
                             <td>{{ booking.startTime }} - {{ booking.endTime }}</td>
                             <td>{{ booking.roomid }}</td>
                             <td>{{ booking.pinCode }}</td>
-                            <td><button type="button" class="btn btn-danger">Anuller Reservation</button></td>
+                            <td>
+                            <button type="button" class="btn btn-danger" @click="DeleteBooking(booking.id)">er du mongol og har fortrudt din booking selvom du fucking selv har bekræftet?</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
     <!--Vue-->
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <!--Bootstrap js-->

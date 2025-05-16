@@ -1,5 +1,5 @@
 import { SharedNavbar } from '/Components/SharedNavbar.js';
-import { getByEmail } from './AxiosCRUD.js';
+import { getByEmail, remove } from './AxiosCRUD.js';
 
 // Tjekker om man er loggint ind før siden vises
 const token = localStorage.getItem('jwt_token');
@@ -13,8 +13,8 @@ else {
                 userEmail: null,
                 isLoading: false,
                 error: null,
-                myBookings: [
-                ]
+                myBookings: [],
+                successMessage: null,
             }
         },
         methods: {
@@ -24,8 +24,28 @@ else {
             },
             redirectToFrontPage() {
                 window.location.replace('FrontPage.html');
+            },
+           async DeleteBooking(bookingId) {
+            console.log('Booking ID:', bookingId);
+                this.error = null;
+                this.successMessage = null;
+                this.isLoading = true;
+
+                try {
+                    const response = await remove('Booking', bookingId);
+                    console.log('Booking annulleret:', response);
+
+                    this.myBookings = this.myBookings.filter(booking => booking.id !== bookingId);
+
+                    this.successMessage = 'Reservationen blev annulleret.';
+                } catch (error) {
+                    console.error('Fejl ved annullering af booking:', error);
+                    this.error = 'Kunne ikke annullere reservationen. Prøv igen senere.';
+                } finally {
+                    this.isLoading = false;
+                }
             }
-        },
+        },       
         computed: {
             myComputed() {
 
