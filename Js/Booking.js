@@ -1,5 +1,5 @@
 import { SharedNavbar } from '/Components/SharedNavbar.js';
-import { ConfirmModal }  from '/Components/ComfirmBooking.js';
+import ConfirmModal from '/Components/ConfirmModal.js';
 import { create } from './AxiosCRUD.js';
 
 const { createApp } = Vue;
@@ -10,6 +10,9 @@ if (!token) {
     window.location.replace('index.html');
 } else {
     const app = createApp({
+        components: {
+            'confirm-modal': ConfirmModal,
+        },
         data() {
             return {
                 booking: {
@@ -89,6 +92,25 @@ if (!token) {
                     this.error = error.response?.data || 'Booking mislykkedes. Prøv igen.';
                 } finally {
                     this.isLoading = false;
+                }
+            },
+             // viser Modal for at bekræfte booking
+            showConfirmModal() {
+                Vue.nextTick(() => {
+                    const modalElement = document.getElementById('bookingConfirmModal');
+                    if (modalElement) {
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    } else {
+                        console.error('Modal element with ID bookingConfirmModal not found');
+                    }
+                });
+            },
+            closeConfirmModal() {
+                const modalElement = document.getElementById('bookingConfirmModal');
+                if (modalElement) {
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
                 }
             },
             getLoggedInUser() {
