@@ -33,3 +33,13 @@ button:hover {
 .zealand-colours {
     background-color: rgb(237, 237, 106);
 }
+.member-search-dropdown {
+    max-height: 150px; 
+    overflow-y: auto;
+}
+.list-group-item-action {
+    cursor: pointer;
+}
+.list-group-item-action:hover {
+    background-color: #f8f9fa;
+}
