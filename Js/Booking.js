@@ -1,6 +1,6 @@
 import { SharedNavbar } from '/Components/SharedNavbar.js';
 import ConfirmModal from '/Components/ConfirmModal.js';
-import { create } from './AxiosCRUD.js';
+import { create, searchUsers } from './AxiosCRUD.js';
 
 const { createApp } = Vue;
 
@@ -24,9 +24,11 @@ if (!token) {
                     userEmail: null,
                     members: [],
                 },
+                memberSearch: '',
+                memberResults: [],
                 isLoading: false,
                 error: null,
-                
+                debounce: null,
             };
         },
         computed: {
@@ -40,15 +42,50 @@ if (!token) {
             },
         },
         methods: {
-            addMember() {
+            async searchMembers() {
+                if (!this.memberSearch.trim()) {
+                    this.memberResults = [];
+                    return;
+                }
+
+                this.isLoading = true;
+                this.error = null;
+
+                try {
+                    this.memberResults = await searchUsers(this.memberSearch);
+                } catch (error) {
+                    console.error('Fejl ved søgning af brugere:', error);
+                    this.error = 'Kunne ikke søge efter brugere. Prøv igen senere.';
+                    this.memberResults = [];
+                } finally {
+                    this.isLoading = false;
+                }
+            },
+            addMember(member) {
                 if (this.booking.members.length >= 3) {
                     this.error = 'Maksimalt 3 gruppemedlemmer kan tilføjes.';
                     setTimeout(() => {
                         this.error = null;
-                    }, 3000); 
+                    }, 3000);
                     return;
                 }
-                this.booking.members.push(''); // burde tilføje et tomt felt til nyt medlemmer
+                if (this.booking.members.includes(member.email)) {
+                    this.error = 'Denne bruger er allerede tilføjet.';
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 3000);
+                    return;
+                }
+                if (member.email === this.booking.userEmail) {
+                    this.error = 'Du kan ikke tilføje dig selv som gruppemedlem.';
+                    setTimeout(() => {
+                        this.error = null;
+                    }, 3000);
+                    return;
+                }
+                this.booking.members.push(member.email);
+                this.memberSearch = '';
+                this.memberResults = [];
             },
             removeMember(index) {
                 this.booking.members.splice(index, 1);
@@ -94,7 +131,6 @@ if (!token) {
                     this.isLoading = false;
                 }
             },
-             // viser Modal for at bekræfte booking
             showConfirmModal() {
                 Vue.nextTick(() => {
                     const modalElement = document.getElementById('bookingConfirmModal');
@@ -122,6 +158,21 @@ if (!token) {
                     return null;
                 }
             },
+            pairEmail(email) {
+                if (!this.memberResults) return email;
+                let pairedMember = this.memberResults.find(m => m.email === email);
+                return pairedMember ? `${pairedMember.name} (${email})` : email;
+            },
+        },
+        watch: {
+            memberSearch: {
+                handler() {
+                    clearTimeout(this.debounce);
+                    this.debounce = setTimeout(() => {
+                        this.searchMembers();
+                    }, 300);
+                }
+            }
         },
         mounted() {
             // Hent query-parametre
@@ -129,7 +180,6 @@ if (!token) {
             const roomParam = params.get('room');
             const startTimeParam = params.get('startTime');
             const endTimeParam = params.get('endTime');
-
 
             // Log query-parametre til debugging
             console.log('Query-parametre:', { room: roomParam, startTime: startTimeParam, endTime: endTimeParam });

@@ -70,6 +70,16 @@ export async function getByEmail(resource, email) {
     }
 }
 
+export async function searchUsers(query) {
+    try {
+        const response = await axios.get(`${API_URL}User/search?query=${encodeURIComponent(query)}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error searching users with query ${query}:`, error);
+        throw error;
+    }
+}
+
 export async function create(resource, data) {
     try {
         const response = await axios.post(`${API_URL}${resource}/`, data, {
