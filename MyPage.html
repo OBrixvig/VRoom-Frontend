@@ -42,13 +42,19 @@
                             <td>{{ booking.roomid }}</td>
                             <td>{{ booking.pinCode }}</td>
                             <td>
-                            <button type="button" class="btn btn-danger" @click="DeleteBooking(booking.id)">Fortrudt?</button>
+                            <button @click="showConfirmModal" class="btn btn-danger" @click="DeleteBooking(booking.id)" :disabled="isLoading">Fortrudt?</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        <confirm-modal
+            id="bookingConfirmModal"
+            message="GG du er spild af liv"
+            @confirm="confirmBooking"
+            @cancel="closeConfirmModal"
+        ></confirm-modal>
     </div>
     <!--Vue-->
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
@@ -60,5 +66,6 @@
 
     <!-- Components -->
      <script type="module" src="Components/SharedNavbar.js"></script>
+    <script src="Components/ConfirmModal.js" type="module"></script>
 </body>
 </html>
