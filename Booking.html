@@ -37,19 +37,27 @@
                                     </div>
                                 </div>
                                 <button v-if="booking.members.length < 3" class="btn btn-secondary mb-3" @click="addMember">+</button>
-                                <button @click="confirmBooking" class="btn btn-primary w-100">Bekræft booking</button>
+                                <button @click="showConfirmModal" class="btn btn-primary w-100" :disabled="isLoading">Bekræft booking</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <confirm-modal
+            id="bookingConfirmModal"
+            message="Er du sikker på, at du vil bekræfte denne booking?"
+            @confirm="confirmBooking"
+            @cancel="closeConfirmModal"
+        ></confirm-modal>
         </div>
     </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="Js/Booking.js" type="module"></script>
+    <script src="Components/ComfirmModal.js" type="module"></script>
     
     <!-- Components -->
      <script type="module" src="Components/SharedNavbar.js"></script>

@@ -1,4 +1,5 @@
 import { SharedNavbar } from '/Components/SharedNavbar.js';
+import { ConfirmModal }  from '/Components/ComfirmBooking.js';
 import { create } from './AxiosCRUD.js';
 
 const { createApp } = Vue;
