@@ -45,7 +45,7 @@
                                 </div>
                                 <p class="card-text">Vælg Tid:</p>
                                 <select class="form-select mb-3" v-model="selectedTimeSlotForBooking[room.roomId]" :disabled="!room.isActive">
-                                    <option disabled value="">Knep dig selv?</option>
+                                    <option disabled>Ledige tider:</option>
                                     <option v-for="slot in room.timeSlots" :value="slot">{{ slot.startTime }} - {{ slot.endTime }}</option>
                                 </select>
                                 <button class="btn btn-light" :disabled="!room.isActive" @click="bookRoom(room)">Book rum</button>
