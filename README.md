@@ -48,7 +48,7 @@ VRoom-Frontend/
 
 1. **Klon projektet**:
    ```sh
-   git clone <repo-url>
+   git clone <https://github.com/OBrixvig/VRoom-Frontend.git>
    cd VRoom-Frontend
    ```
 
