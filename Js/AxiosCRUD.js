@@ -1,5 +1,5 @@
 // Ingen import, da axios er global fra CDN
-const API_URL = 'http://localhost:5245/api/';
+const API_URL = 'https://zroomrestapi.azurewebsites.net/api/';
 
 //#region Axios Interceptors
 // Request interceptor: Tilføjer token fra localStorage til Authorization-header
