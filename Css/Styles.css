@@ -46,6 +46,7 @@ button:hover {
 .roomimage{
     width: 100%;
     height: 15rem;
+}
 .member-search-dropdown {
     max-height: 150px;
     overflow-y: auto;
