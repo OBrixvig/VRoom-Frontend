@@ -17,6 +17,9 @@ if (!token) {
         data() {
             return {
                 userEmail: null,
+                userName: null, // Rettede fra 'username' til 'userName' for konsistens
+                userStudentId: null,
+                userClassId: null,
                 isLoading: false,
                 error: null,
                 myBookings: [],
@@ -59,26 +62,52 @@ if (!token) {
                 }
             },
             canDeleteBooking(booking) {
-                if (!booking.date || !booking.startTime) {
+                if (!booking?.date || !booking?.startTime) {
                     console.error('Ugyldig booking:', booking);
                     return false;
                 }
                 const bookingDate = new Date(booking.date);
-                const [hours, minutes] = booking.startTime.split(':').map(Number);
-                bookingDate.setHours(hours, minutes, 0, 0);
                 if (isNaN(bookingDate.getTime())) {
-                    console.error('Ugyldig dato/tid:', booking.date, booking.startTime);
+                    console.error('Ugyldig dato:', booking.date);
                     return false;
                 }
+                const timeParts = booking.startTime.split(':');
+                if (timeParts.length < 2) {
+                    console.error('Ugyldigt tidsformat:', booking.startTime);
+                    return false;
+                }
+                const [hours, minutes] = timeParts.map(Number);
+                if (isNaN(hours) || isNaN(minutes)) {
+                    console.error('Ugyldige tidskomponenter:', booking.startTime);
+                    return false;
+                }
+                bookingDate.setHours(hours, minutes, 0, 0);
                 const now = new Date();
                 const cancellationDeadline = new Date(bookingDate.getTime() - 5 * 60 * 1000); // 5 minutter før
                 console.log('Booking:', booking.id, 'Now:', now, 'Deadline:', cancellationDeadline);
                 return now <= cancellationDeadline;
             },
             formatCancellationDeadline(booking) {
+                if (!booking?.date || !booking?.startTime) {
+                    console.error('Ugyldig booking for frist:', booking);
+                    return '';
+                }
                 const bookingDate = new Date(booking.date);
-                const [hours, minutes] = booking.startTime.split(':').map(Number);
-                bookingDate.setHours(hours, minutes, 0, 0);
+                if (isNaN(bookingDate.getTime())) {
+                    console.error('Ugyldig dato:', booking.date);
+                    return '';
+                }
+                const timeParts = booking.startTime.split(':');
+                if (timeParts.length < 2) {
+                    console.error('Ugyldigt tidsformat:', booking.startTime);
+                    return '';
+                }
+                const [hours, mins] = timeParts.map(Number);
+                if (isNaN(hours) || isNaN(mins)) {
+                    console.error('Ugyldige tidskomponenter:', booking.startTime);
+                    return '';
+                }
+                bookingDate.setHours(hours, mins, 0, 0);
                 const deadline = new Date(bookingDate.getTime() - 5 * 60 * 1000);
                 return deadline.toLocaleString('da-DK', { hour: '2-digit', minute: '2-digit' });
             },
@@ -145,22 +174,62 @@ if (!token) {
             getLoggedInUser() {
                 try {
                     const payload = JSON.parse(atob(token.split('.')[1]));
-                    return payload.email || null;
+                    console.log('JWT payload:', payload); // Debugging
+                    return {
+                        email: payload.email || null,
+                        name: payload.name || null,
+                        studentId: payload.studentId || null,
+                        classId: payload.classId || null,
+                    };
                 } catch (e) {
-                    console.error('Fejl ved hentning af email i JWT:', e);
+                    console.error('Fejl ved hentning af brugeroplysninger i JWT:', e);
+                    return { email: null, name: null, studentId: null, classId: null };
+                }
+            },
+            async fetchUserDetails(email) {
+                try {
+                    const response = await await getByEmail('Users', this.userEmail, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
+                        },
+                    });
+                    console.log('Hentede brugeroplysninger:', response.data);
+                    return response.data;
+                } catch (error) {
+                    console.error('Fejl ved hentning af brugeroplysninger:', error);
                     return null;
                 }
             },
             formatDate(date) {
-                return new Date(date).toLocaleDateString('da-DK', {
+                if (!date) return '';
+                const parsedDate = new Date(date);
+                if (isNaN(parsedDate.getTime())) {
+                    console.error('Ugyldig dato for formatering:', date);
+                    return '';
+                }
+                return parsedDate.toLocaleDateString('da-DK', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                 });
             },
         },
-        beforeMount() {
-            this.userEmail = this.getLoggedInUser();
+        async beforeMount() {
+            const user = this.getLoggedInUser();
+            this.userEmail = user.email;
+            this.userName = user.name;
+            this.userStudentId = user.studentId;
+            this.userClassId = user.classId;
+
+            if (this.userEmail && (!this.userName || !this.userStudentId || !this.userClassId)) {
+                const userDetails = await this.fetchUserDetails(this.userEmail);
+                if (userDetails) {
+                    this.userName = this.userName || userDetails.name || 'Ukendt navn';
+                    this.userStudentId = this.userStudentId || userDetails.studentId || 'Ukendt studienummer';
+                    this.userClassId = this.userClassId || userDetails.classId || 'Ukendt klassenavn';
+                }
+            }
+
             if (!this.userEmail) {
                 this.error = 'Kunne ikke hente brugeroplysninger.';
             }

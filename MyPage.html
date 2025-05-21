@@ -23,6 +23,16 @@
             <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
             <!-- Hovedindhold -->
             <div v-else>
+                <!--Personlige oplysninger--> 
+                <h1><strong>{{ userName || 'Ukendt navn' }}</strong></h1>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <p class="card-text"><strong>E-mailadresse:</strong> {{ userEmail || 'Ukendt email' }}</p>
+                        <p class="card-text"><strong>Studie-nummer:</strong> {{ userStudentId || 'Ukendt studienummer' }}</p>
+                        <p class="card-text"><strong>Klasse-navn:</strong> {{ userClassId || 'Ukendt klassenavn' }}</p>
+                    </div>
+                </div>
+                <!--Reservationer--> 
                 <h1>Dine Reservationer</h1>
                 <table class="table">
                     <thead>
