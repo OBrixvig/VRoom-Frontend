@@ -43,3 +43,7 @@ button:hover {
 .list-group-item-action:hover {
     background-color: #f8f9fa;
 }
+.roomimage{
+    width: 100%;
+    height: 15rem;
+}

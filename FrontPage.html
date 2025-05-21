@@ -38,6 +38,11 @@
                         <div class="card" :class="{'bg-success text-white': room.isActive, 'bg-secondary text-white': !room.isActive}">
                             <div class="card-body">
                                 <h5 class="card-title">Rum {{ room.roomId }}</h5>
+                                <div v-for="roomWithPic in rooms">
+                                    <figure v-if="roomWithPic.roomId === room.roomId">
+                                        <img v-bind:src="roomWithPic.pictureLink" alt="Billede af rummet" class="roomimage">
+                                    </figure>
+                                </div>
                                 <p class="card-text">Vælg Tid:</p>
                                 <select class="form-select mb-3" v-model="selectedTimeSlotForBooking[room.roomId]" :disabled="!room.isActive">
                                     <option disabled value="">Knep dig selv?</option>
@@ -51,6 +56,8 @@
             </div>
         </div>
     </div>
+
+    
 
     <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
