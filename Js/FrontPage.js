@@ -55,6 +55,9 @@ else
                 
                 return roomMap;
             },
+            roomsWithPictures() {
+                return this.rooms
+            }
         },
         methods: {
             async fetchBookings() {
@@ -76,6 +79,27 @@ else
                         window.location.replace('index.html');
                     }
                 } finally {
+                    this.isLoading = false;
+                }
+            },
+            async fetchRooms() {
+                try {
+                    this.isLoading = true;
+                    this.error = null;
+                    const roomsFromDB = await getAll('Rooms');
+                    this.rooms = roomsFromDB.map(room => ({
+                        roomId: room.roomId,
+                        pictureLink: room.pictureLink
+                    }));
+                }
+                catch (error) {
+                    this.error = 'Kunne ikke hente rummene.';
+                    if (error.response?.status === 401) {
+                        localStorage.removeItem('jwt_token');
+                        window.location.replace('index.html');
+                    }
+                }
+                finally {
                     this.isLoading = false;
                 }
             },
@@ -125,6 +149,7 @@ else
             // Sætter dato i localStorage toIsoString da det er den format det ligner API'en vil have. Dunno burde høre Nikolaj men fuck naj
             localStorage.setItem('selectedDate', this.currentDate.toISOString().split('T')[0]);
             this.fetchBookings();
+            this.fetchRooms();
         },
     });
 
